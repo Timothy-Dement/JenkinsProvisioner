@@ -77,7 +77,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                     var associateAddressParams =
                                     {
                                         InstanceId : instanceId,
-                                        AllocationId : allocationId;
+                                        AllocationId : allocationId
                                     };
 
                                     EC2.associateAddress(associateAddressParams, function(err, data)
