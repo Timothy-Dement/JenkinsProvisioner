@@ -37,87 +37,108 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
             {
                 console.log('Successfully created security group\n');
 
-                var runInstanceParams =
+                var authorizeSecurityGroupIngressParams =
                 {
-                    ImageId : 'ami-3c383146',
-                    InstanceType : 't1.micro',
-                    MinCount : 1,
-                    MaxCount : 1,
-                    KeyName: 'Jenkins',
-                    SecurityGroups : [ 'Jenkins' ]
-                };
+                    GroupName : 'Jenkins',
+                    IpPermissions :
+                    [{
+                        IpProtocol : 'tcp',
+                        FromPort : 22,
+                        ToPort : 22,
+                        IpRanges : { 'CidrIp' : '0.0.0.0/0' }
+                    }]
+                }
 
-                EC2.runInstances(runInstanceParams, function(err, data)
+                EC2.authorizeSecurityGroupIngress(authorizeSecurityGroupIngressParams, function(err, data)
                 {
-                    if(err) console.log('Failed to run instance\n', err);
+                    if(err) console.log('Failed to authorize security group ingress\n', err);
                     else
                     {
-                        console.log('Successfully ran instance\n');
+                        console.log('Successfully authorized security group ingress\n');
 
-                        instanceId = data.Instances[0].InstanceId;
-
-                        console.log('Pausing for 1 minute...\n');
-
-                        setTimeout(function()
+                        var runInstanceParams =
                         {
-                            var allocateAddressParams = {};
+                            ImageId : 'ami-3c383146',
+                            InstanceType : 't1.micro',
+                            MinCount : 1,
+                            MaxCount : 1,
+                            KeyName: 'Jenkins',
+                            SecurityGroups : [ 'Jenkins' ]
+                        };
 
-                            EC2.allocateAddress(allocateAddressParams, function(err, data)
-                            {
-                                if(err) console.log('Failed to allocate address\n', err);
-                                else
+                        EC2.runInstances(runInstanceParams, function(err, data)
+                        {
+                            if(err) console.log('Failed to run instance\n', err);
+                            else
+                            {                
+                                console.log('Successfully ran instance\n');
+
+                                instanceId = data.Instances[0].InstanceId;
+
+                                console.log('Pausing for 1 minute...\n');
+
+                                setTimeout(function()
                                 {
-                                    console.log('Successfully allocated address\n');
+                                    var allocateAddressParams = {};
 
-                                    publicIpAddress = data.PublicIp;
-                                    allocationId = data.AllocationId;
-
-                                    var associateAddressParams =
+                                    EC2.allocateAddress(allocateAddressParams, function(err, data)
                                     {
-                                        InstanceId : instanceId,
-                                        AllocationId : allocationId
-                                    };
-
-                                    EC2.associateAddress(associateAddressParams, function(err, data)
-                                    {
-                                        if(err) console.log('Failed to associate address\n', err);
+                                        if(err) console.log('Failed to allocate address\n', err);
                                         else
                                         {
-                                            console.log('Successfully associated address\n');
+                                            console.log('Successfully allocated address\n');
 
-                                            fs.writeFile('/home/vagrant/share/keys/jenkins.key', privateKey, function(err)
+                                            publicIpAddress = data.PublicIp;
+                                            allocationId = data.AllocationId;
+
+                                            var associateAddressParams =
                                             {
-                                                if(err) console.log('Failed to write private key file\n', err);
+                                                InstanceId : instanceId,
+                                                AllocationId : allocationId
+                                            };
+
+                                            EC2.associateAddress(associateAddressParams, function(err, data)
+                                            {
+                                                if(err) console.log('Failed to associate address\n', err);
                                                 else
                                                 {
-                                                    console.log('Successfully wrote private key file\n');
+                                                    console.log('Successfully associated address\n');
 
-                                                    fs.chmod('/home/vagrant/share/keys/jenkins.key', 0600, function(err)
+                                                    fs.writeFile('/home/vagrant/share/keys/jenkins.key', privateKey, function(err)
                                                     {
-                                                        if(err) console.log('Failed to change private key file permissions\n');
-                                                        else console.log('Successfully changed private key file permissions\n');
+                                                        if(err) console.log('Failed to write private key file\n', err);
+                                                        else
+                                                        {
+                                                            console.log('Successfully wrote private key file\n');
+
+                                                            fs.chmod('/home/vagrant/share/keys/jenkins.key', 0600, function(err)
+                                                            {
+                                                                if(err) console.log('Failed to change private key file permissions\n');
+                                                                else console.log('Successfully changed private key file permissions\n');
+                                                            });
+                                                        }
+                                                    });
+
+                                                    var inventory = `[jenkins]\n`
+                                                    inventory += publicIpAddress
+                                                    inventory += ' ansible_user=ubuntu'
+                                                    inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key'
+                                                    inventory += ' ansible_python_interpreter=/usr/bin/python3'
+
+                                                    fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
+                                                    {
+                                                        if(err) console.log('Failed to write inventory file\n');
+                                                        else console.log('Successfully wrote inventory file\n');
                                                     });
                                                 }
                                             });
-
-                                            var inventory = `[jenkins]\n`
-                                            inventory += publicIpAddress
-                                            inventory += ' ansible_user=vagrant'
-                                            inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key'
-                                            inventory += ' ansible_python_interpreter=/usr/bin/python3'
-
-                                            fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
-                                            {
-                                                if(err) console.log('Failed to write inventory file\n');
-                                                else console.log('Successfully wrote inventory file\n');
-                                            });
                                         }
                                     });
-                                }
-                            });
-                        }, 60000);
+                                }, 60000);
+                            }
+                        });
                     }
-                });
+                });                
             }
         });
     }
