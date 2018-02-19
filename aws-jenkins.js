@@ -72,8 +72,6 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                     publicIpAddress = data.PublicIp;
                                     allocationId = data.AllocationId;
 
-                                    console.log(publicIpAddress);
-
                                     var associateAddressParams =
                                     {
                                         InstanceId : instanceId,
