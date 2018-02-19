@@ -41,13 +41,21 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                 {
                     GroupName : 'Jenkins',
                     IpPermissions :
-                    [{
-                        IpProtocol : 'tcp',
-                        FromPort : 22,
-                        ToPort : 22,
-                        IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
-                    }]
-                }
+                    [
+                        {
+                            IpProtocol : 'tcp',
+                            FromPort : 22,
+                            ToPort : 22,
+                            IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
+                        },
+                        {
+                            IpProtocol : 'tcp',
+                            FromPort : 8080,
+                            ToPort : 8080,
+                            IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
+                        }
+                    ]
+                };
 
                 EC2.authorizeSecurityGroupIngress(authorizeSecurityGroupIngressParams, function(err, data)
                 {
@@ -90,6 +98,8 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
 
                                             publicIpAddress = data.PublicIp;
                                             allocationId = data.AllocationId;
+
+                                            process.env['JENKINS_IP_ADDRESS'] = publicIpAddress;
 
                                             var associateAddressParams =
                                             {
