@@ -99,8 +99,6 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                             publicIpAddress = data.PublicIp;
                                             allocationId = data.AllocationId;
 
-                                            process.env['JENKINS_IP_ADDRESS'] = publicIpAddress;
-
                                             var associateAddressParams =
                                             {
                                                 InstanceId : instanceId,
@@ -129,16 +127,24 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         }
                                                     });
 
-                                                    var inventory = `[jenkins]\n`
-                                                    inventory += publicIpAddress
-                                                    inventory += ' ansible_user=ubuntu'
-                                                    inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key'
-                                                    inventory += ' ansible_python_interpreter=/usr/bin/python3'
+                                                    var inventory = `[jenkins]\n`;
+                                                    inventory += publicIpAddress;
+                                                    inventory += ' ansible_user=ubuntu';
+                                                    inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key';
+                                                    inventory += ' ansible_python_interpreter=/usr/bin/python3';
 
                                                     fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
                                                     {
                                                         if(err) console.log('Failed to write inventory file\n');
                                                         else console.log('Successfully wrote inventory file\n');
+                                                    });
+
+                                                    var ansible_defaults = `jenkins_ip_address: ${publicIpAddress}`;
+
+                                                    fs.writeFile('/home/vagrant/share/defaults/main.yml', ansible_defaults, function(err)
+                                                    {
+                                                        if(err) console.log('Failed to write Ansible defaults file\n');
+                                                        else console.log('Successfully wrote Ansible defaults file\n');
                                                     });
                                                 }
                                             });
