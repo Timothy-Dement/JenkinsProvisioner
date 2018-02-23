@@ -13,7 +13,7 @@ var publicIpAddress;
 var instanceId;
 var allocationId;
 
-var createKeyPairParams = { KeyName : 'Jenkins' };
+var createKeyPairParams = { KeyName : 'iTrust' };
 
 EC2.createKeyPair(createKeyPairParams, function(err, data)
 {
@@ -26,8 +26,8 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
 
         var createSecurityGroupParams =
         {
-            Description : 'Jenkins',
-            GroupName : 'Jenkins'
+            Description : 'iTrust',
+            GroupName : 'iTrust'
         };
 
         EC2.createSecurityGroup(createSecurityGroupParams, function(err, data)
@@ -39,13 +39,19 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
 
                 var authorizeSecurityGroupIngressParams =
                 {
-                    GroupName : 'Jenkins',
+                    GroupName : 'iTrust',
                     IpPermissions :
                     [
                         {
                             IpProtocol : 'tcp',
                             FromPort : 22,
                             ToPort : 22,
+                            IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
+                        },
+                        {
+                            IpProtocol : 'tcp',
+                            FromPort : 3306,
+                            ToPort : 3306,
                             IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
                         },
                         {
@@ -72,8 +78,8 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                 InstanceType : 't2.medium',
                                 MinCount : 1,
                                 MaxCount : 1,
-                                KeyName: 'Jenkins',
-                                SecurityGroups : [ 'Jenkins' ]
+                                KeyName: 'iTrust',
+                                SecurityGroups : [ 'iTrust' ]
                             };
     
                             EC2.runInstances(runInstanceParams, function(err, data)
