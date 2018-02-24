@@ -52,12 +52,12 @@
     - name: Clone JenkinsProvisioner repository
       git:
         repo: https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/JenkinsProvisioner.git
-        dest: /home/{{ ansible_ssh_user }}/JenkinsProvisioner
+        dest: /home/{{ ansible_user }}/JenkinsProvisioner
         force: yes
 
     - name: Install JenkinsProvisioner packages
       npm:
-        path: /home/{{ ansible_ssh_user }}/JenkinsProvisioner
+        path: /home/{{ ansible_user }}/JenkinsProvisioner
 
     - name: Set AWS and GitHub environment variables
       lineinfile:
@@ -69,7 +69,7 @@
       - GITHUB_USERNAME
       - GITHUB_PASSWORD
 
-    - name: Disable Jenkins setup wizard (JAVA_ARGS)
+    - name: Disable Jenkins setup wizard
       lineinfile:
         dest: /etc/default/jenkins
         regexp: '^JAVA_ARGS='
@@ -104,7 +104,7 @@
 
     - name: Copy configure-user.groovy template
       template:
-        src: configure-users.groovy
+        src: /home/vagrant/share/JenkinsProvisioner/templates/configure-users.groovy
         dest: /var/lib/jenkins/init.groovy.d/configure-users.groovy
         mode: 0755
 
@@ -166,22 +166,22 @@
 
     - name: Copy jenkins_jobs.ini script
       template:
-        src: jenkins_jobs.ini
+        src: /home/vagrant/share/JenkinsProvisioner/templates/jenkins_jobs.ini
         dest: /etc/jenkins_jobs/jenkins_jobs.ini
         mode: 0755
         force: yes
 
     - name: Create jobs directory
       file:
-        path: /home/{{ ansible_ssh_user }}/jobs
+        path: /home/{{ ansible_user }}/jobs
         state: directory
         mode: 0755
 
     - name: Copy job file templates
       become: yes
       template:
-        src: "{{ item }}"
-        dest: "/home/{{ ansible_ssh_user }}/jobs/{{ item }}"
+        src: /home/vagrant/share/JenkinsProvisioner/templates/{{ item }}
+        dest: "/home/{{ ansible_user }}/jobs/{{ item }}"
         force: yes
         mode: 0755
       with_items:
