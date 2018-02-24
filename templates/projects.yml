@@ -12,7 +12,7 @@
              sudo nodejs /home/ubuntu/JenkinsProvisioner/provisioners/aws-checkbox-trusty.js
              sudo chown ubuntu /home/ubuntu/checkbox-trusty.key
              sudo sleep 10
-             sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/checkbox.yml -i /home/ubuntu/inventory-checkbox
+             sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/playbooks/checkbox.yml -i /home/ubuntu/inventory-checkbox
       - '{name}_job':
            name: iTrust2
            command: |
@@ -29,4 +29,4 @@
              sudo nodejs /home/ubuntu/JenkinsProvisioner/provisioners/aws-itrust.js
              sudo chown ubuntu /home/ubuntu/itrust.key
              sudo sleep 10
-             sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/itrust.yml -i /home/ubuntu/inventory-itrust
+             sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/playbooks/itrust.yml -i /home/ubuntu/inventory-itrust
