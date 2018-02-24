@@ -51,7 +51,7 @@
 
     - name: Clone JenkinsProvisioner repository
       git:
-        repo: https://github.com/timothy-dement/JenkinsProvisioner.git
+        repo: https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/JenkinsProvisioner.git
         dest: /home/{{ ansible_ssh_user }}/JenkinsProvisioner
         force: yes
 
