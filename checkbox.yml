@@ -111,17 +111,23 @@
         regexp: '/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html'
         replace: '/home/{{ansible_ssh_user}}/Checkbox/public_html'
     
+    # - name: Copy default to different location
+    #   copy:
+    #     src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/default
+    #     dest: /etc/nginx/sites-available/default
+    #     remote_src: yes
+
     - name: Copy default to different location
-      copy:
-        src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/default
-        dest: /etc/nginx/sites-available/default
-        remote_src: yes
+      shell: "cp /home/ubuntu/Checkbox/local-conf/default /etc/nginx/sites-available/default"
+
+    # - name: Copy nginx to diferent location
+    #   copy:
+    #     src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/nginx.conf
+    #     dest: /etc/nginx/
+    #     remote_src: yes
 
     - name: Copy nginx to diferent location
-      copy:
-        src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/nginx.conf
-        dest: /etc/nginx/
-        remote_src: yes
+      shell: "cp /home/ubuntu/Checkbox/local-conf/nginx.conf /etc/nginx/nginx.conf"
 
     - name: restart nginx
       service: name=nginx state=restarted enabled=yes
