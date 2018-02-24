@@ -132,7 +132,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         var inventory = `[jenkins]\n`;
                                                         inventory += publicIpAddress;
                                                         inventory += ' ansible_user=ubuntu';
-                                                        inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key';
+                                                        inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/keys/jenkins.key';
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
     
                                                         fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
@@ -141,7 +141,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                             else console.log('Successfully wrote inventory file\n');
                                                         });
     
-                                                        var jenkins_ip_address = `jenkins_ip_address: ${publicIpAddress}`;
+                                                        var jenkins_ip_address = `\njenkins_ip_address: ${publicIpAddress}\n`;
     
                                                         fs.open('/home/vagrant/share/vars.yml', 'a', function(err)
                                                         {
