@@ -59,110 +59,112 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                             FromPort : 27017,
                             ToPort : 27017,
                             IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ] 
+                        },
+                        {
+                            IpProtocol : 'tcp',
+                            FromPort : 80,
+                            ToPort : 80,
+                            IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]                             
                         }
                     ]
                 };
 
-                EC2.authorizeSecurityGroupIngress(authorizeSecurityGroupIngressParams, function(err, data)
+                setTimeout(function()
                 {
-                    if(err) console.log('Failed to authorize security group ingress\n', err);
-                    else
+                    EC2.authorizeSecurityGroupIngress(authorizeSecurityGroupIngressParams, function(err, data)
                     {
-                        console.log('Successfully authorized security group ingress\n');
-
-                        var runInstanceParams =
+                        if(err) console.log('Failed to authorize security group ingress\n', err);
+                        else
                         {
-                            ImageId : 'ami-071c247d',
-                            InstanceType : 'm3.medium',
-                            MinCount : 1,
-                            MaxCount : 1,
-                            KeyName: 'CheckBoxTrusty',
-                            SecurityGroups : [ 'CheckBoxTrusty' ]
-                        };
-
-                        EC2.runInstances(runInstanceParams, function(err, data)
-                        {
-                            if(err) console.log('Failed to run instance\n', err);
-                            else
-                            {                
-                                console.log('Successfully ran instance\n');
-
-                                instanceId = data.Instances[0].InstanceId;
-
-                                console.log('Pausing for 1 minute...\n');
-
-                                setTimeout(function()
-                                {
-                                    var allocateAddressParams = {};
-
-                                    EC2.allocateAddress(allocateAddressParams, function(err, data)
+                            console.log('Successfully authorized security group ingress\n');
+    
+                            var runInstanceParams =
+                            {
+                                ImageId : 'ami-071c247d',
+                                InstanceType : 'm3.medium',
+                                MinCount : 1,
+                                MaxCount : 1,
+                                KeyName: 'CheckBoxTrusty',
+                                SecurityGroups : [ 'CheckBoxTrusty' ]
+                            };
+    
+                            EC2.runInstances(runInstanceParams, function(err, data)
+                            {
+                                if(err) console.log('Failed to run instance\n', err);
+                                else
+                                {                
+                                    console.log('Successfully ran instance\n');
+    
+                                    instanceId = data.Instances[0].InstanceId;
+    
+                                    console.log('Pausing for 1 minute...\n');
+    
+                                    setTimeout(function()
                                     {
-                                        if(err) console.log('Failed to allocate address\n', err);
-                                        else
+                                        var allocateAddressParams = {};
+    
+                                        EC2.allocateAddress(allocateAddressParams, function(err, data)
                                         {
-                                            console.log('Successfully allocated address\n');
-
-                                            publicIpAddress = data.PublicIp;
-                                            allocationId = data.AllocationId;
-
-                                            var associateAddressParams =
+                                            if(err) console.log('Failed to allocate address\n', err);
+                                            else
                                             {
-                                                InstanceId : instanceId,
-                                                AllocationId : allocationId
-                                            };
-
-                                            EC2.associateAddress(associateAddressParams, function(err, data)
-                                            {
-                                                if(err) console.log('Failed to associate address\n', err);
-                                                else
+                                                console.log('Successfully allocated address\n');
+    
+                                                publicIpAddress = data.PublicIp;
+                                                allocationId = data.AllocationId;
+    
+                                                var associateAddressParams =
                                                 {
-                                                    console.log('Successfully associated address\n');
-
-                                                    console.log(privateKey);
-
-                                                    // fs.writeFile('/home/vagrant/share/keys/checkbox-trusty.key', privateKey, function(err)
-                                                    // {
-                                                    //     if(err) console.log('Failed to write private key file\n', err);
-                                                    //     else
-                                                    //     {
-                                                    //         console.log('Successfully wrote private key file\n');
-
-                                                    //         fs.chmod('/home/vagrant/share/keys/checkbox-trusty.key', 0600, function(err)
-                                                    //         {
-                                                    //             if(err) console.log('Failed to change private key file permissions\n');
-                                                    //             else console.log('Successfully changed private key file permissions\n');
-                                                    //         });
-                                                    //     }
-                                                    // });
-
-                                                    // var inventory = `[checkbox-trusty]\n`;
-                                                    // inventory += publicIpAddress;
-                                                    // inventory += ' ansible_user=ubuntu';
-                                                    // inventory += ' ansible_ssh_private_key_file=./keys/checkbox-trusty.key';
-                                                    // inventory += ' ansible_python_interpreter=/usr/bin/python3';
-
-                                                    // fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
-                                                    // {
-                                                    //     if(err) console.log('Failed to write inventory file\n');
-                                                    //     else console.log('Successfully wrote inventory file\n');
-                                                    // });
-
-                                                    // var ansible_defaults = `checkbox_trusty_ip_address: ${publicIpAddress}`;
-
-                                                    // fs.writeFile('/home/vagrant/share/defaults/main.yml', ansible_defaults, function(err)
-                                                    // {
-                                                    //     if(err) console.log('Failed to write Ansible defaults file\n');
-                                                    //     else console.log('Successfully wrote Ansible defaults file\n');
-                                                    // });
-                                                }
-                                            });
-                                        }
-                                    });
-                                }, 60000);
-                            }
-                        });
-                    }
-                });                
+                                                    InstanceId : instanceId,
+                                                    AllocationId : allocationId
+                                                };
+    
+                                                EC2.associateAddress(associateAddressParams, function(err, data)
+                                                {
+                                                    if(err) console.log('Failed to associate address\n', err);
+                                                    else
+                                                    {
+                                                        console.log('Successfully associated address\n');
+    
+                                                        console.log(privateKey);
+    
+                                                        fs.writeFile('/home/ubuntu/checkbox-trusty.key', privateKey, function(err)
+                                                        {
+                                                            if(err) console.log('Failed to write private key file\n', err);
+                                                            else
+                                                            {
+                                                                console.log('Successfully wrote private key file\n');
+    
+                                                                fs.chmod('/home/ubuntu/checkbox-trusty.key', 0600, function(err)
+                                                                {
+                                                                    if(err) console.log('Failed to change private key file permissions\n');
+                                                                    else console.log('Successfully changed private key file permissions\n');
+                                                                });
+                                                            }
+                                                        });
+    
+                                                        var inventory = `[checkbox-trusty]\n`;
+                                                        inventory += publicIpAddress;
+                                                        inventory += ' ansible_user=ubuntu';
+                                                        inventory += ' ansible_ssh_private_key_file=./checkbox-trusty.key';
+                                                        inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no"
+                                                        inventory += ' ansible_python_interpreter=/usr/bin/python3';
+    
+                                                        fs.writeFile('/home/inventory-checkbox', inventory, function(err)
+                                                        {
+                                                            if(err) console.log('Failed to write inventory file\n');
+                                                            else console.log('Successfully wrote inventory file\n');
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }, 30000);
+                                }
+                            });
+                        }
+                    });
+                }, 5000);
             }
         });
     }
