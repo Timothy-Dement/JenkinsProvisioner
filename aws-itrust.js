@@ -140,15 +140,6 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         inventory += ' ansible_user=ubuntu';
                                                         inventory += ' ansible_ssh_private_key_file=./itrust.key';
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
-    
-                                                        try
-                                                        {
-                                                            fs.appendFileSync('/home/ubuntu/inventory-inventory', inventory);
-                                                        }
-                                                        catch(err)
-                                                        {
-                                                            console.log('Failed to write inventory file\n', err);
-                                                        }
 
                                                         fs.writeFile('/home/ubuntu/inventory-itrust', inventory, function(err)
                                                         {
