@@ -151,8 +151,8 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
     
                                                         fs.writeFile('/home/ubuntu/inventory-checkbox', inventory, function(err)
                                                         {
-                                                            if(err) console.log('Failed to write inventory file\n');
-                                                            else console.log('Successfully wrote inventory file\n');
+                                                            if(err) console.log('Failed to write inventory-checkbox file\n');
+                                                            else console.log('Successfully wrote inventory-checkbox file\n');
                                                         });
                                                     }
                                                 });
