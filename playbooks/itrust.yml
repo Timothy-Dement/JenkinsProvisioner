@@ -80,7 +80,7 @@
     when: result.stat.isdir is not defined
 
   - name: Step 16 Update the configuration file for mySQL
-    copy: src=/home/ubuntu/JenkinsProvisioner/my.cnf dest=/etc/mysql/my.cnf force=yes
+    copy: src=/home/ubuntu/JenkinsProvisioner/templates/my.cnf dest=/etc/mysql/my.cnf force=yes
     become: yes
 
   - name: Step 17 Restart MySQL
