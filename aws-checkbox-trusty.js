@@ -125,9 +125,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                     else
                                                     {
                                                         console.log('Successfully associated address\n');
-    
-                                                        console.log(privateKey);
-    
+
                                                         fs.writeFile('/home/ubuntu/checkbox-trusty.key', privateKey, function(err)
                                                         {
                                                             if(err) console.log('Failed to write private key file\n', err);
@@ -147,7 +145,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         inventory += publicIpAddress;
                                                         inventory += ' ansible_user=ubuntu';
                                                         inventory += ' ansible_ssh_private_key_file=./checkbox-trusty.key';
-                                                        inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no"
+                                                        inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
     
                                                         fs.writeFile('/home/inventory-checkbox', inventory, function(err)

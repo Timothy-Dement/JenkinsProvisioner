@@ -139,7 +139,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         inventory += publicIpAddress;
                                                         inventory += ' ansible_user=ubuntu';
                                                         inventory += ' ansible_ssh_private_key_file=./itrust.key';
-                                                        inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no"
+                                                        inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
 
                                                         fs.writeFile('/home/ubuntu/inventory-itrust', inventory, function(err)
