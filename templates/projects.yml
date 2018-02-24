@@ -9,7 +9,7 @@
              cd checkbox.io/server-side/site/
              npm install
            post_build_script: |
-             sudo nodejs /home/ubuntu/JenkinsProvisioner/aws-checkbox-trusty.js
+             sudo nodejs /home/ubuntu/JenkinsProvisioner/provisioners/aws-checkbox-trusty.js
              sudo chown ubuntu /home/ubuntu/checkbox-trusty.key
              sudo sleep 10
              sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/checkbox.yml -i /home/ubuntu/inventory-checkbox
@@ -26,7 +26,7 @@
              sed -i -e 's/password/password root/g' src/main/java/db.properties
              mvn clean test verify checkstyle:checkstyle
            post_build_script: |
-             sudo nodejs /home/ubuntu/JenkinsProvisioner/aws-itrust.js
+             sudo nodejs /home/ubuntu/JenkinsProvisioner/provisioners/aws-itrust.js
              sudo chown ubuntu /home/ubuntu/itrust.key
              sudo sleep 10
              sudo ansible-playbook /home/ubuntu/JenkinsProvisioner/itrust.yml -i /home/ubuntu/inventory-itrust
