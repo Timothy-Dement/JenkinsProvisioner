@@ -148,7 +148,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         inventory += " ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
     
-                                                        fs.writeFile('/home/inventory-checkbox', inventory, function(err)
+                                                        fs.writeFile('/home/ubuntu/inventory-checkbox', inventory, function(err)
                                                         {
                                                             if(err) console.log('Failed to write inventory file\n');
                                                             else console.log('Successfully wrote inventory file\n');
