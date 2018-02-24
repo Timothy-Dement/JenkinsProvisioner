@@ -17,10 +17,10 @@ var createKeyPairParams = { KeyName : 'iTrust' };
 
 EC2.createKeyPair(createKeyPairParams, function(err, data)
 {
-    if(err) console.log('Failed to create key pair\n', err);
+    if(err) console.log('\nFailed to create key pair\n', err);
     else
     {
-        console.log('Successfully created key pair\n');
+        console.log('\nSuccessfully created key pair\n');
 
         privateKey = data.KeyMaterial;
 
@@ -63,6 +63,8 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                     ]
                 };
 
+                console.log('Pausing for 5 seconds...\n');
+
                 setTimeout(function()
                 {
                     EC2.authorizeSecurityGroupIngress(authorizeSecurityGroupIngressParams, function(err, data)
@@ -91,7 +93,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
     
                                     instanceId = data.Instances[0].InstanceId;
     
-                                    console.log('Pausing for 1 minute...\n');
+                                    console.log('Pausing for 10 seconds...\n');
     
                                     setTimeout(function()
                                     {
@@ -151,7 +153,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                 });
                                             }
                                         });
-                                    }, 30000);
+                                    }, 10000);
                                 }
                             });
                         }
