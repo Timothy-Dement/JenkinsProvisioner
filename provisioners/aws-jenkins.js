@@ -87,7 +87,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
     
                                     instanceId = data.Instances[0].InstanceId;
     
-                                    console.log('Pausing for 10 seconds...\n');
+                                    console.log('Pausing for 30 seconds...\n');
     
                                     setTimeout(function()
                                     {
@@ -160,7 +160,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                 });
                                             }
                                         });
-                                    }, 10000);
+                                    }, 30000);
                                 }
                             });
                         }
