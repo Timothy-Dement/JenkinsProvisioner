@@ -150,7 +150,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                             if(err) console.log('Failed to open Ansible var file\n', err);
                                                             else console.log('Successfully opened Ansible var file\n');
 
-                                                            fs.appendFile('/home/vagrant/share/vars.yml', jenkins_ip_address, function(err)
+                                                            fs.appendFile('/home/vagrant/share/vars/main.yml', jenkins_ip_address, function(err)
                                                             {
                                                                 if(err) console.log('Failed to append Ansible vars file\n', err);
                                                                 else console.log('Successfully appended Ansible vars file\n');
