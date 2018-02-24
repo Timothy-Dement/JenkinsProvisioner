@@ -123,7 +123,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                             {
                                                                 console.log('Successfully wrote private key file\n');
     
-                                                                fs.chmod('/home/vagrant/share/keys/jenkins.key', 0600, function(err)
+                                                                fs.chmod('/home/vagrant/share/JenkinsProvisioner/keys/jenkins.key', 0600, function(err)
                                                                 {
                                                                     if(err) console.log('Failed to change private key file permissions\n');
                                                                     else console.log('Successfully changed private key file permissions\n');
@@ -134,10 +134,10 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         var inventory = `[jenkins]\n`;
                                                         inventory += publicIpAddress;
                                                         inventory += ' ansible_user=ubuntu';
-                                                        inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/keys/jenkins.key';
+                                                        inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/JenkinsProvisioner/keys/jenkins.key';
                                                         inventory += ' ansible_python_interpreter=/usr/bin/python3';
     
-                                                        fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
+                                                        fs.writeFile('/home/vagrant/share/JenkinsProvisioner/inventory', inventory, function(err)
                                                         {
                                                             if(err) console.log('Failed to write inventory file\n');
                                                             else console.log('Successfully wrote inventory file\n');
@@ -145,12 +145,12 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
     
                                                         var jenkins_ip_address = `\njenkins_ip_address: ${publicIpAddress}\n`;
     
-                                                        fs.open('/home/vagrant/share/vars.yml', 'a', function(err)
+                                                        fs.open('/home/vagrant/share/JenkinsProvisioner/vars/main.yml', 'a', function(err)
                                                         {
                                                             if(err) console.log('Failed to open Ansible var file\n', err);
                                                             else console.log('Successfully opened Ansible var file\n');
 
-                                                            fs.appendFile('/home/vagrant/share/vars/main.yml', jenkins_ip_address, function(err)
+                                                            fs.appendFile('/home/vagrant/share/JenkinsProvisioner/vars/main.yml', jenkins_ip_address, function(err)
                                                             {
                                                                 if(err) console.log('Failed to append Ansible vars file\n', err);
                                                                 else console.log('Successfully appended Ansible vars file\n');
