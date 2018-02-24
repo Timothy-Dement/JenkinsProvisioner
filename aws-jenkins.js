@@ -141,13 +141,19 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                             else console.log('Successfully wrote inventory file\n');
                                                         });
     
-                                                        var ansible_defaults = `jenkins_ip_address: ${publicIpAddress}`;
+                                                        var jenkins_ip_address = `jenkins_ip_address: ${publicIpAddress}`;
     
-                                                        fs.appendFile('/home/vagrant/share/vars.yml', ansible_defaults, function(err)
+                                                        fs.open('/home/vagrant/share/vars.yml', 'a', function(err)
                                                         {
-                                                            if(err) console.log('Failed to write Ansible defaults file\n');
-                                                            else console.log('Successfully wrote Ansible defaults file\n');
-                                                        });    
+                                                            if(err) console.log('Failed to open Ansible var file\n', err);
+                                                            else console.log('Successfully opened Ansible var file\n');
+
+                                                            fs.appendFile('/home/vagrant/share/vars.yml', jenkins_ip_address, function(err)
+                                                            {
+                                                                if(err) console.log('Failed to append Ansible vars file\n', err);
+                                                                else console.log('Successfully appended Ansible vars file\n');
+                                                            });
+                                                        });
                                                     }
                                                 });
                                             }
