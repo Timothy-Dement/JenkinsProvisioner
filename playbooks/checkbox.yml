@@ -1,0 +1,145 @@
+- name: Setup Checkbox
+  hosts: checkbox-trusty
+  become: yes
+
+  # vars:
+  environment:
+    MONGO_PORT: "3002"
+    MONGO_IP: "localhost"
+    MONGO_USER: "admin"
+    MONGO_PASSWORD: "root"
+
+  tasks:
+    
+    - name: Install Git, Nodejs, NPM
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      with_items:
+      - "git"
+      - "nodejs-legacy"
+      - "npm"
+   
+    - name: Add Mongodb ppa key
+      become: yes
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 7F0CEB10
+
+    - name: Add mongodb sources list
+      become: yes
+      lineinfile:
+        dest: /etc/apt/sources.list.d/mongodb-org-3.0.list
+        line: "deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse"
+        state: present
+        create: yes
+
+    - name: Install MongoDB
+      become: yes
+      apt: name={{ item }}=3.0.7 state=present update_cache=yes
+      with_items:
+        - mongodb-org
+        - mongodb-org-server
+        - mongodb-org-shell
+        - mongodb-org-mongos
+        - mongodb-org-tools
+    
+    - name: Installing Python-Pip
+      apt:
+        pkg: python-pip
+        state: latest
+
+    - name: Installing Python pip 3
+      apt:
+        pkg: python3-pip
+        state: latest
+
+    - name: Install the latest pymongo package
+      pip: name=pymongo state=latest use_mirrors=no
+    
+    - name: Install nginx
+      become: yes
+      apt:
+        pkg: nginx
+        state: latest
+        update_cache: yes
+
+    - name: Intsall pymongo
+      pip:
+        name: pymongo
+        state: present
+
+    - name: Check if cloned repo exists
+      stat:
+        path: /home/{{ ansible_ssh_user }}/Checkbox
+      register: repo_dir
+
+    - name: Clone Checkbox
+      git:
+        repo: https://github.com/chrisparnin/checkbox.io.git
+        dest: /home/{{ansible_ssh_user}}/Checkbox
+      become: yes
+      when: repo_dir.stat.isdir is not defined
+
+    - name: Create MongoDb user
+      mongodb_user:
+        database: "admin"
+        name: "admin"
+        password: "root"
+        roles: readWriteAnyDatabase,dbAdmin,userAdminAnyDatabase
+
+    - name: Export MONGO_USER environment variable
+      shell: 'echo "export MONGO_TEST=admin" >> /etc/environment'
+
+    - name: Export MONGO_PORT environment variable
+      shell: 'echo "export MONGO_PORT=3002" >> /etc/environment'
+
+    - name: Export MONGO_PASS environment variable
+      shell: 'echo "export MONGO_PASSWORD=root" >> /etc/environment'
+
+    - name: Export MONGO_IP environment variable
+      shell: 'echo "export MONGO_IP=local_host" >> /etc/environment'
+
+    - name: install packages
+      npm:
+        path: /home/{{ansible_ssh_user}}/Checkbox/server-side/site
+        state: latest
+
+    - name: update location of public_html into default
+      replace:
+        dest: /home/{{ansible_ssh_user}}/Checkbox/local-conf/default
+        regexp: '/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html'
+        replace: '/home/{{ansible_ssh_user}}/Checkbox/public_html'
+    
+    # - name: Copy default to different location
+    #   copy:
+    #     src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/default
+    #     dest: /etc/nginx/sites-available/default
+    #     remote_src: yes
+
+    - name: Copy default to different location
+      shell: "cp /home/ubuntu/Checkbox/local-conf/default /etc/nginx/sites-available/default"
+
+    # - name: Copy nginx to diferent location
+    #   copy:
+    #     src: /home/{{ansible_ssh_user}}/Checkbox/local-conf/nginx.conf
+    #     dest: /etc/nginx/
+    #     remote_src: yes
+
+    - name: Copy nginx to diferent location
+      shell: "cp /home/ubuntu/Checkbox/local-conf/nginx.conf /etc/nginx/nginx.conf"
+
+    - name: restart nginx
+      service: name=nginx state=restarted enabled=yes
+
+    - name: Install forever
+      npm: name=forever global=yes state=present
+    
+    - name: Start application
+      command: forever start /home/{{ansible_ssh_user}}/Checkbox/server-side/site/server.js
+     
+    - name: restart nginx
+      service: name=nginx state=restarted enabled=yes
+
+#resources: https://docs.mongodb.com/getting-started/shell/tutorial/install-mongodb-on-ubuntu/
+#https://stackoverflow.com/questions/20919222/ansible-hangs-when-starting-node-js-server
