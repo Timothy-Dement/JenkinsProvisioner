@@ -114,40 +114,40 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                     {
                                                         console.log('Successfully associated address\n');
     
-                                                        // fs.writeFile('/home/vagrant/share/keys/jenkins.key', privateKey, function(err)
-                                                        // {
-                                                        //     if(err) console.log('Failed to write private key file\n', err);
-                                                        //     else
-                                                        //     {
-                                                        //         console.log('Successfully wrote private key file\n');
+                                                        fs.writeFile('/home/vagrant/share/keys/jenkins.key', privateKey, function(err)
+                                                        {
+                                                            if(err) console.log('Failed to write private key file\n', err);
+                                                            else
+                                                            {
+                                                                console.log('Successfully wrote private key file\n');
     
-                                                        //         fs.chmod('/home/vagrant/share/keys/jenkins.key', 0600, function(err)
-                                                        //         {
-                                                        //             if(err) console.log('Failed to change private key file permissions\n');
-                                                        //             else console.log('Successfully changed private key file permissions\n');
-                                                        //         });
-                                                        //     }
-                                                        // });
+                                                                fs.chmod('/home/vagrant/share/keys/jenkins.key', 0600, function(err)
+                                                                {
+                                                                    if(err) console.log('Failed to change private key file permissions\n');
+                                                                    else console.log('Successfully changed private key file permissions\n');
+                                                                });
+                                                            }
+                                                        });
     
-                                                        // var inventory = `[jenkins]\n`;
-                                                        // inventory += publicIpAddress;
-                                                        // inventory += ' ansible_user=ubuntu';
-                                                        // inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key';
-                                                        // inventory += ' ansible_python_interpreter=/usr/bin/python3';
+                                                        var inventory = `[jenkins]\n`;
+                                                        inventory += publicIpAddress;
+                                                        inventory += ' ansible_user=ubuntu';
+                                                        inventory += ' ansible_ssh_private_key_file=./keys/jenkins.key';
+                                                        inventory += ' ansible_python_interpreter=/usr/bin/python3';
     
-                                                        // fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
-                                                        // {
-                                                        //     if(err) console.log('Failed to write inventory file\n');
-                                                        //     else console.log('Successfully wrote inventory file\n');
-                                                        // });
+                                                        fs.writeFile('/home/vagrant/share/inventory', inventory, function(err)
+                                                        {
+                                                            if(err) console.log('Failed to write inventory file\n');
+                                                            else console.log('Successfully wrote inventory file\n');
+                                                        });
     
-                                                        // var ansible_defaults = `jenkins_ip_address: ${publicIpAddress}`;
+                                                        var ansible_defaults = `jenkins_ip_address: ${publicIpAddress}`;
     
-                                                        // fs.writeFile('/home/vagrant/share/vars.yml', ansible_defaults, function(err)
-                                                        // {
-                                                        //     if(err) console.log('Failed to write Ansible defaults file\n');
-                                                        //     else console.log('Successfully wrote Ansible defaults file\n');
-                                                        // });
+                                                        fs.writeFile('/home/vagrant/share/defaults/main.yml', ansible_defaults, function(err)
+                                                        {
+                                                            if(err) console.log('Failed to write Ansible defaults file\n');
+                                                            else console.log('Successfully wrote Ansible defaults file\n');
+                                                        });
     
                                                         console.log(privateKey);
                                                     }
