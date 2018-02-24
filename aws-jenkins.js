@@ -143,7 +143,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
     
                                                         var ansible_defaults = `jenkins_ip_address: ${publicIpAddress}`;
     
-                                                        fs.writeFile('/home/vagrant/share/defaults/main.yml', ansible_defaults, function(err)
+                                                        fs.appendFile('/home/vagrant/share/vars.yml', ansible_defaults, function(err)
                                                         {
                                                             if(err) console.log('Failed to write Ansible defaults file\n');
                                                             else console.log('Successfully wrote Ansible defaults file\n');
