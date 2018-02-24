@@ -147,9 +147,7 @@ EC2.createKeyPair(createKeyPairParams, function(err, data)
                                                         {
                                                             if(err) console.log('Failed to write Ansible defaults file\n');
                                                             else console.log('Successfully wrote Ansible defaults file\n');
-                                                        });
-    
-                                                        console.log(privateKey);
+                                                        });    
                                                     }
                                                 });
                                             }
